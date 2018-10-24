@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 Dennis273 <dennic695@gmail.com>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,35 +16,38 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
 )
+
+var registerArgs struct {
+	username string
+	password string
+	email string
+	phone string
+}
 
 // registerCmd represents the register command
 var registerCmd = &cobra.Command{
 	Use:   "register",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Register new user",
+	Long:  `Register new user`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("register called")
+		p0 := ValidateUsername(registerArgs.username)
+		p1 := ValidatePassword(registerArgs.password)
+		p2 := ValidateEmail(registerArgs.email)
+		p3 := ValidatePhoneNumber(registerArgs.phone)
+		if !p0 || !p1 || !p2 || !p3 {
+			fmt.Println("Invalid arguments => aborted.")
+			return
+		}
+		fmt.Printf("%s %s %s %s\n", registerArgs.username, registerArgs.password,registerArgs.email, registerArgs.phone)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(registerCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// registerCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// registerCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	registerCmd.PersistentFlags().StringVarP(&(registerArgs.username), "username", "u", "", "Username to login")
+	registerCmd.PersistentFlags().StringVarP(&(registerArgs.password), "password", "p", "", "Password")
+	registerCmd.PersistentFlags().StringVarP(&(registerArgs.email), "email", "e", "", "Email")
+	registerCmd.PersistentFlags().StringVarP(&(registerArgs.phone), "phoneNumber", "n", "", "Phone number")
 }
