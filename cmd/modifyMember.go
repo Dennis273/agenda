@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 dengzijie
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,31 +20,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var modifyMemberArgs struct {
+	title     string
+	addMember []string
+	delMember []string
+}
+
 // modifyMemberCmd represents the modifyMember command
 var modifyMemberCmd = &cobra.Command{
 	Use:   "modifyMember",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "add or delete member",
+	Long:  `add membe(s) to or delete member(s) from the meeting`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("modifyMember called")
+		fmt.Println("meeting title: ", modifyMemberArgs.title)
+		fmt.Printf("new participators: ")
+		for num, name := range modifyMemberArgs.addMember {
+			fmt.Printf("%d:%s ", num, name)
+		}
+		fmt.Printf("\nold participators:")
+		for num, name := range modifyMemberArgs.delMember {
+			fmt.Printf("%d:%s ", num, name)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(modifyMemberCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// modifyMemberCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// modifyMemberCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	modifyMemberCmd.Flags().StringVarP(&(modifyMemberArgs.title), "title", "t", "", "meeting title")
+	modifyMemberCmd.Flags().StringArrayVarP(&(modifyMemberArgs.addMember), "add", "a", nil, "add member(s) to the meeting")
+	modifyMemberCmd.Flags().StringArrayVarP(&(modifyMemberArgs.delMember), "delete", "d", nil, "delete member(s) from the meeting")
 }
