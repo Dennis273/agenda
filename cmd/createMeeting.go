@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 dengzijie
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,31 +20,34 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var createMeetingArgs struct {
+	meetingTitle  string
+	startTime     string
+	endTime       string
+	participators []string
+}
+
 // createMeetingCmd represents the createMeeting command
 var createMeetingCmd = &cobra.Command{
 	Use:   "createMeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "creat a meeting",
+	Long:  "creat a meeting as sponsor",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("createMeeting called")
+		fmt.Println("meeting title: ", createMeetingArgs.meetingTitle)
+		fmt.Println("start time: ", createMeetingArgs.startTime)
+		fmt.Println("end time: ", createMeetingArgs.endTime)
+		fmt.Printf("participators: ")
+		for num, name := range createMeetingArgs.participators {
+			fmt.Printf("%d:%s ", num, name)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(createMeetingCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createMeetingCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createMeetingCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.meetingTitle), "title", "t", "", "meeting title")
+	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.startTime), "stime", "s", "", "the time when the meeting begin(mm-dd-hh-mm)")
+	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.endTime), "etime", "e", "", "the end time of the meeting(mm-dd-hh-mm)")
+	createMeetingCmd.Flags().StringArrayVarP(&(createMeetingArgs.participators), "particpators", "p", nil, "the participators of the meeting")
 }
