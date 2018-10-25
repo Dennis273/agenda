@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -23,20 +24,20 @@ import (
 // cancelMeetingCmd represents the cancelMeeting command
 var cancelMeetingCmd = &cobra.Command{
 	Use:   "cancelMeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Cancel a meeting that you have created",
+	Long:  "Cancel a meeting that you have created, when there are participators in the meeting, they will quit from the meeting",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("cancelMeeting called")
+		if title != "" {
+			fmt.Printf("You will cancel %s meeting\n", title)
+		} else {
+			fmt.Fprintf(os.Stderr, "You have to input title by -t\n")
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(cancelMeetingCmd)
+	cancelMeetingCmd.PersistentFlags().StringVarP(&(title), "title", "t", "", "meeting title")
 
 	// Here you will define your flags and configuration settings.
 
