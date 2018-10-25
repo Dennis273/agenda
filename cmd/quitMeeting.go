@@ -16,27 +16,31 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
 
+var title string
+
 // quitMeetingCmd represents the quitMeeting command
 var quitMeetingCmd = &cobra.Command{
-	Use:   "quitMeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "quitMeeting -t [meeting title]",
+	Short: "Quit a meeting that you have participated in",
+	Long:  "Quit a meeting that you have participated in, when there is none participator in the meeting, the meeting will be cancelled ",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("quitMeeting called")
+
+		if title != "" {
+			fmt.Printf("You will quit from %s meeting\n", title)
+		} else {
+			fmt.Fprintf(os.Stderr, "You have to input title by -t\n")
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(quitMeetingCmd)
+	quitMeetingCmd.PersistentFlags().StringVarP(&(title), "title", "t", "", "meeting title")
 
 	// Here you will define your flags and configuration settings.
 
