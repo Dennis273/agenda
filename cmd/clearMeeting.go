@@ -23,15 +23,10 @@ import (
 // clearMeetingCmd represents the clearMeeting command
 var clearMeetingCmd = &cobra.Command{
 	Use:   "clearMeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Clear out all of your meetings",
+	Long:  "You can use this command to clear all of your meeting",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("clearMeeting called")
+		fmt.Println("When you have logged in, you can clear all your meetings")
 	},
 }
 
