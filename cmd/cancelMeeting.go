@@ -20,31 +20,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cancelMeetingArgs struct {
+	title string
+}
 // cancelMeetingCmd represents the cancelMeeting command
 var cancelMeetingCmd = &cobra.Command{
 	Use:   "cancelMeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Cancel a meeting that you have created",
+	Long:  "Cancel a meeting that you have created, when there are participators in the meeting, they will quit from the meeting",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("cancelMeeting called")
+		if cancelMeetingArgs.title != "" {
+			fmt.Printf("You will cancel %s meeting\n", cancelMeetingArgs.title)
+		} else {
+			fmt.Println("You have to input title by -t\n")
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(cancelMeetingCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// cancelMeetingCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// cancelMeetingCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	cancelMeetingCmd.PersistentFlags().StringVarP(&(cancelMeetingArgs.title), "title", "t", "", "meeting title")
 }
