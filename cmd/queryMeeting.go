@@ -28,8 +28,8 @@ var queryMeetingArgs struct {
 // queryMeetingCmd represents the queryMeeting command
 var queryMeetingCmd = &cobra.Command{
 	Use:   "queryMeeting",
-	Short: "query meetings with a time interval",
-	Long:  `query meetings with a time interval`,
+	Short: "Query meetings with a time interval which involves you.",
+	Long:  `Query meetings with a time interval which involves you.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("queryMeeting called")
 		fmt.Printf("the start time: %s\n", queryMeetingArgs.startTime)
@@ -40,6 +40,6 @@ var queryMeetingCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(queryMeetingCmd)
 
-	queryMeetingCmd.Flags().StringVarP(&(queryMeetingArgs.startTime), "start", "s", "", "the start time")
-	queryMeetingCmd.Flags().StringVarP(&(queryMeetingArgs.endTime), "end", "e", "", "the start time")
+	queryMeetingCmd.Flags().StringVarP(&(queryMeetingArgs.startTime), "startTime", "s", "", "the start time(yyyy-MM-dd-hh-mm)")
+	queryMeetingCmd.Flags().StringVarP(&(queryMeetingArgs.endTime), "endTime", "e", "", "the end time(yyyy-MM-dd-hh-mm)")
 }
