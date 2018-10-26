@@ -30,16 +30,16 @@ var createMeetingArgs struct {
 // createMeetingCmd represents the createMeeting command
 var createMeetingCmd = &cobra.Command{
 	Use:   "createMeeting",
-	Short: "creat a meeting",
-	Long:  "creat a meeting as sponsor",
+	Short: "Create a meeting",
+	Long:  "Create a meeting as sponsor",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("createMeeting called")
 		fmt.Println("meeting title: ", createMeetingArgs.meetingTitle)
 		fmt.Println("start time: ", createMeetingArgs.startTime)
 		fmt.Println("end time: ", createMeetingArgs.endTime)
-		fmt.Printf("participators: ")
+		fmt.Printf("participators: \n")
 		for num, name := range createMeetingArgs.participators {
-			fmt.Printf("%d:%s ", num, name)
+			fmt.Printf("%d:%s \n", num, name)
 		}
 	},
 }
@@ -47,7 +47,7 @@ var createMeetingCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(createMeetingCmd)
 	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.meetingTitle), "title", "t", "", "meeting title")
-	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.startTime), "stime", "s", "", "the time when the meeting begin(mm-dd-hh-mm)")
-	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.endTime), "etime", "e", "", "the end time of the meeting(mm-dd-hh-mm)")
-	createMeetingCmd.Flags().StringArrayVarP(&(createMeetingArgs.participators), "particpators", "p", nil, "the participators of the meeting")
+	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.startTime), "startTime", "s", "", "the time when the meeting begin(yyyy-dd-hh-mm)")
+	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.endTime), "endTime", "e", "", "the end time of the meeting(yyyy-dd-hh-mm)")
+	createMeetingCmd.Flags().StringArrayVarP(&(createMeetingArgs.participators), "participators", "p", nil, "the participators of the meeting")
 }
