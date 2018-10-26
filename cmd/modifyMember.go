@@ -29,8 +29,8 @@ var modifyMemberArgs struct {
 // modifyMemberCmd represents the modifyMember command
 var modifyMemberCmd = &cobra.Command{
 	Use:   "modifyMember",
-	Short: "add or delete member",
-	Long:  `add membe(s) to or delete member(s) from the meeting`,
+	Short: "Add or delete member(s)",
+	Long:  `Add member(s) to into speacified meeting or delete member(s) from it`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("modifyMember called")
 		fmt.Println("meeting title: ", modifyMemberArgs.title)
