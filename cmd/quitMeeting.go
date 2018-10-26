@@ -16,39 +16,30 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 )
 
-var title string
+var quitMeetingArgs struct {
+	title string
+}
 
 // quitMeetingCmd represents the quitMeeting command
 var quitMeetingCmd = &cobra.Command{
 	Use:   "quitMeeting -t [meeting title]",
 	Short: "Quit a meeting that you have participated in",
-	Long:  "Quit a meeting that you have participated in, when there is none participator in the meeting, the meeting will be cancelled ",
+	Long:  "Quit a meeting that you have participated in. When there is none participator in the meeting, the meeting will be cancelled ",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if title != "" {
-			fmt.Printf("You will quit from %s meeting\n", title)
+		if quitMeetingArgs.title != "" {
+			fmt.Printf("You will quit from %s meeting\n", quitMeetingArgs.title)
 		} else {
-			fmt.Fprintf(os.Stderr, "You have to input title by -t\n")
+			fmt.Println("You have to input title by -t\n")
 		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(quitMeetingCmd)
-	quitMeetingCmd.PersistentFlags().StringVarP(&(title), "title", "t", "", "meeting title")
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// quitMeetingCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// quitMeetingCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	quitMeetingCmd.PersistentFlags().StringVarP(&(quitMeetingArgs.title), "title", "t", "", "meeting title")
 }
