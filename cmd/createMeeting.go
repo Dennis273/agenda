@@ -47,7 +47,7 @@ var createMeetingCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(createMeetingCmd)
 	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.meetingTitle), "title", "t", "", "meeting title")
-	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.startTime), "startTime", "s", "", "the time when the meeting begin(yyyy-dd-hh-mm)")
-	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.endTime), "endTime", "e", "", "the end time of the meeting(yyyy-dd-hh-mm)")
+	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.startTime), "startTime", "s", "", "the time when the meeting begin(yyyy-MM-dd-hh-mm)")
+	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.endTime), "endTime", "e", "", "the end time of the meeting(yyyy-MM-dd-hh-mm)")
 	createMeetingCmd.Flags().StringArrayVarP(&(createMeetingArgs.participators), "participators", "p", nil, "the participators of the meeting")
 }
