@@ -2,8 +2,8 @@ package entity
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
-	"time"
 )
 
 type Meeting struct {
@@ -17,7 +17,48 @@ type Meeting struct {
 const meetingFilePath string = "./meeting.json"
 
 func CreateMeeting(meeting Meeting) (bool, string) {
-
+	username := readCurrentUserFromFile()
+	allMeetings := readMeetingsFromFile()
+	allUsers := readUsersFromFile()
+	currentUser := readCurrentUserFromFile()
+	for _, temp := range allMeetings {
+		if temp.Title == meeting.Title {
+			return false, "meeting exit"
+		}
+	}
+	for _, user1 := range meeting.Participator {
+		var flag = true
+		for _, user2 := range allUsers {
+			if user1 == user2.Username {
+				flag = false
+				break
+			}
+		}
+		if flag {
+			return false, fmt.Sprintf("%s is not exit", user1)
+		}
+	}
+	for _, temp := range allMeetings {
+		if (meeting.StartTime < temp.StartTime && meeting.EndTime > temp.StartTime) || (meeting.StartTime < temp.EndTime && meeting.EndTime > temp.EndTime) {
+			if temp.Holder == meeting.Holder {
+				return false, "You are busy at that time"
+			}
+			for _, user1 := range meeting.Participator {
+				if user1 == meeting.Holder {
+					return false, fmt.Sprintf("%s is busy at that time", user1)
+				}
+				for _, user2 := range temp.Participator {
+					if meeting.Holder == user2 {
+						return false, "You are busy at that time"
+					}
+					if user1 == user2 {
+						return false, fmt.Sprintf("%s is busy at that time", user1)
+					}
+				}
+			}
+		}
+	}
+	return true, ""
 }
 
 func AddMemberToMeeting(title string, user string) (bool, string) {
@@ -28,7 +69,7 @@ func RemoveMemberFromMeeting(title string, user string) (bool, string) {
 
 }
 
-func QueryMeeting() []Meeting {
+func QueryMeeting(startTime, endTime int64) []Meeting {
 
 }
 
