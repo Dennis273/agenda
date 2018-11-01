@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/Dmaxzj/agenda/entity"
 	"github.com/spf13/cobra"
 )
 
@@ -35,6 +36,13 @@ var modifyMemberCmd = &cobra.Command{
 		fmt.Println("modifyMember called")
 		fmt.Println("meeting title: ", modifyMemberArgs.title)
 		fmt.Printf("new participators: ")
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("ModifyMeeting failed: %s", r)
+			} else {
+				fmt.Println("ModifyMeeting success")
+			}
+		}()
 		for num, name := range modifyMemberArgs.addMember {
 			fmt.Printf("%d:%s ", num, name)
 		}
@@ -42,6 +50,7 @@ var modifyMemberCmd = &cobra.Command{
 		for num, name := range modifyMemberArgs.delMember {
 			fmt.Printf("%d:%s ", num, name)
 		}
+		entity.ModifyMeeting(modifyMemberArgs.title, modifyMemberArgs.addMember, modifyMemberArgs.delMember)
 	},
 }
 
