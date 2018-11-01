@@ -12,6 +12,10 @@ type User struct {
 	Phone    string
 }
 
+var login_flag bool
+
+var User_Login User
+
 const userFilePath string = "./user.json"
 const currentUserFilePath string = "./currentUser.txt"
 
@@ -32,6 +36,13 @@ func init() {
 	}
 }
 
+// check if the user has logged in
+func CheckUserLogin() bool {
+	login_flag = true
+	return login_flag
+}
+
+/*
 // check username and write new user info into file
 func CreateUser(user User) (bool, string) {
 
@@ -56,6 +67,8 @@ func DeleteUser() (bool, string) {
 func QueryUser() []User {
 
 }
+
+*/
 
 func readUsersFromFile() []User {
 	file, err := os.Open(userFilePath)
