@@ -16,10 +16,12 @@ package cmd
 
 import (
 	"fmt"
+	"regexp"
 
-	"github.com/spf13/cobra"
-	"github.com/Dmaxzj/agenda/entity"
 	"math"
+
+	"github.com/Dmaxzj/agenda/entity"
+	"github.com/spf13/cobra"
 )
 
 var createMeetingArgs struct {
@@ -46,29 +48,30 @@ var createMeetingCmd = &cobra.Command{
 
 		defer func() {
 			if r := recover(); r != nil {
-				fmt.Println("Create meeting failed:" r);
+				fmt.Println("Create meeting failed:", r)
+			} else {
+				fmt.Println("Create meeting success")
 			}
 		}()
-		
+
 		if !checkTimeFormat(createMeetingArgs.startTime) || !checkTimeFormat(createMeetingArgs.endTime) {
-			panic(fmt.Fprint("error date format"))
+			panic(fmt.Sprint("Invalid date"))
 		}
 		var year, month, day, hour, min int
 		var stime, etime int64
 		fmt.Sscanf(createMeetingArgs.startTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
-		stime = year * math.Pow10(8) + month * math.Pow10(6) + day * math.Pow10(4) + hour * math.Pow10(2) + min
+		stime = int64(year*int(math.Pow10(8)) + month*int(math.Pow10(6)) + day*int(math.Pow10(4)) + hour*int(math.Pow10(2)) + min)
 		fmt.Sscanf(createMeetingArgs.endTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
-		etime = year * math.Pow10(8) + month * math.Pow10(6) + day * math.Pow10(4) + hour * math.Pow10(2) + min
-		if stime >=etime {
+		etime = int64(year*int(math.Pow10(8)) + month*int(math.Pow10(6)) + day*int(math.Pow10(4)) + hour*int(math.Pow10(2)) + min)
+		if stime >= etime {
 			panic("time interval error")
 		}
-		new_meeting = meeting.Meeting{createMeetingArgs.meetingTitle,
-										"",
-									createMeetingArgs.participators,
-									stime,
-									etime
-								}
-		success, err := entity.createMeeting(new_meeting)
+		new_meeting := entity.Meeting{createMeetingArgs.meetingTitle,
+			"",
+			createMeetingArgs.participators,
+			stime,
+			etime}
+		success, err := entity.CreateMeeting(new_meeting)
 		if !success {
 			panic(err)
 		}
@@ -83,21 +86,28 @@ func init() {
 	createMeetingCmd.Flags().StringArrayVarP(&(createMeetingArgs.participators), "participators", "p", nil, "the participators of the meeting")
 }
 
-
 func checkTimeFormat(time string) bool {
 	var year, month, day, hour, min int
-	if matched, err := regexp.MatchString("[/d]{4}-[/d]{2}-[/d]{2}-[/d]{2}-[/d]{2}", time); !matched {
+	if matched, _ := regexp.MatchString("[\\d]{4}-[\\d]{2}-[\\d]{2}-[\\d]{2}-[\\d]{2}", time); !matched {
 		panic("date formate error")
 	}
 	fmt.Sscanf(createMeetingArgs.startTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
-	if min < 0 || min >= 60 || hour < 0 || hour >= 24 || day >= 32 || day <= 0 || month <= 0 || month > 12 || year < 0
+	if min < 0 || min >= 60 || hour < 0 || hour >= 24 || day >= 32 || day <= 0 || month <= 0 || month > 12 || year < 0 {
 		return false
-	switch month {
-		case 1,3,5,7,8,10,12: return true
-	case 4,6,8,11: if day == 31 return true
-	default: if day <= 28
-	return true
-	else
-	return year%400 == 0 || (year%4 == 0 && year%100 != 0)
 	}
+	switch month {
+	case 1, 3, 5, 7, 8, 10, 12:
+		return true
+	case 4, 6, 9, 11:
+		if day == 31 {
+			return true
+		}
+	default:
+		if day <= 28 {
+			return true
+		} else {
+			return year%400 == 0 || (year%4 == 0 && year%100 != 0)
+		}
+	}
+	return true
 }

@@ -36,27 +36,27 @@ func init() {
 
 // check username and write new user info into file
 func CreateUser(user User) (bool, string) {
-
+	return true, ""
 }
 
 // check password and write userinfo into currentUsr file
 func Login(username, password string) (bool, string) {
-
+	return true, ""
 }
 
 // clear userinfo in currentUsr file
 func Logout() (bool, string) {
-
+	return true, ""
 }
 
 // remove user info from file
 func DeleteUser() (bool, string) {
-
+	return true, ""
 }
 
 // query all userinfo from file
 func QueryUser() []User {
-
+	return make([]User, 0)
 }
 
 func readUsersFromFile() []User {
@@ -114,14 +114,14 @@ func readCurrentUserFromFile() (username string) {
 }
 
 func writeCurrentUserToFile(username string) {
+	var str string
 	file, err := os.Open(currentUserFilePath)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
-	file_writer = bufio.NewWriter(file)
-	fmt.Fprintln(file_writer, username)
-	_, err = file.WriteString(file_writer)
+	str = fmt.Sprintf("%s\n", username)
+	_, err = file.WriteString(str)
 	if err != nil {
 		panic(err)
 	}

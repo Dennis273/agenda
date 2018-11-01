@@ -17,10 +17,10 @@ type Meeting struct {
 const meetingFilePath string = "./meeting.json"
 
 func CreateMeeting(meeting Meeting) (bool, string) {
-	username := readCurrentUserFromFile()
 	allMeetings := readMeetingsFromFile()
 	allUsers := readUsersFromFile()
 	currentUser := readCurrentUserFromFile()
+	meeting.Holder = currentUser
 	for _, temp := range allMeetings {
 		if temp.Title == meeting.Title {
 			return false, "meeting exit"
@@ -62,30 +62,31 @@ func CreateMeeting(meeting Meeting) (bool, string) {
 }
 
 func AddMemberToMeeting(title string, user string) (bool, string) {
-
+	return true, ""
 }
 
 func RemoveMemberFromMeeting(title string, user string) (bool, string) {
-
+	return true, ""
 }
 
 func QueryMeeting(startTime, endTime int64) []Meeting {
-
+	return make([]Meeting, 0)
 }
 
 func CancelMeeting(title string) (bool, string) {
-
+	return true, ""
 }
 
 func QuitMeeting(title string) (bool, string) {
-
+	return true, ""
 }
 
 func ClearMeeting() (bool, string) {
-
+	return true, ""
 }
 
 func readMeetingsFromFile() []Meeting {
+	meetings := make([]Meeting, 0)
 	file, err := os.Open(meetingFilePath)
 	if err != nil {
 		panic(err)
@@ -97,10 +98,12 @@ func readMeetingsFromFile() []Meeting {
 	}
 	buffer := make([]byte, fInfo.Size())
 	_, err = file.Read(buffer)
+	if fInfo.Size() == 0 {
+		return meetings
+	}
 	if err != nil {
 		panic(err)
 	}
-	meetings := make([]Meeting, 0)
 	err = json.Unmarshal(buffer, meetings)
 	if err != nil {
 		panic(err)
