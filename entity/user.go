@@ -1,7 +1,9 @@
 package entity
 
 import (
+	"bufio"
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -92,6 +94,34 @@ func writeUsersIntoFile(users []User) {
 	defer file.Close()
 
 	_, err = file.Write(data)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func readCurrentUserFromFile() (username string) {
+	file, err := os.Open(currentUserFilePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	file_reader := bufio.NewReader(file)
+	username, err = file_reader.ReadString('\n')
+	if err != nil {
+		panic(err)
+	}
+	return username
+}
+
+func writeCurrentUserToFile(username string) {
+	file, err := os.Open(currentUserFilePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	file_writer = bufio.NewWriter(file)
+	fmt.Fprintln(file_writer, username)
+	_, err = file.WriteString(file_writer)
 	if err != nil {
 		panic(err)
 	}
