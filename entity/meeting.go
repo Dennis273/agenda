@@ -21,12 +21,17 @@ func CreateMeeting(meeting Meeting) (bool, string) {
 	allUsers := readUsersFromFile()
 	currentUser := readCurrentUserFromFile()
 	meeting.Holder = currentUser
+	var tempMeeting = meeting
+	tempMeeting.Participator = make([]string, 0)
+	// check meeting title
 	for _, temp := range allMeetings {
 		if temp.Title == meeting.Title {
 			return false, "meeting exit"
 		}
 	}
-	for _, user1 := range meeting.Participator {
+
+	// check user
+	for i, user1 := range meeting.Participator {
 		var flag = true
 		for _, user2 := range allUsers {
 			if user1 == user2.Username {
@@ -37,9 +42,19 @@ func CreateMeeting(meeting Meeting) (bool, string) {
 		if flag {
 			return false, fmt.Sprintf("%s is not exit", user1)
 		}
+		if user1 == meeting.Holder {
+			return false, fmt.Sprint("You could not attend this meeting as participator")
+		}
+		for _, user2 := range meeting.Participator[i+1:] {
+			if user1 == user2 {
+				return false, fmt.Sprint("You could not repeatly attend a user to a same meeting")
+
+			}
+		}
 	}
+
 	for _, temp := range allMeetings {
-		if (meeting.StartTime < temp.StartTime && meeting.EndTime > temp.StartTime) || (meeting.StartTime < temp.EndTime && meeting.EndTime > temp.EndTime) {
+		if (meeting.StartTime <= temp.StartTime && meeting.EndTime > temp.StartTime) || (meeting.StartTime < temp.EndTime && meeting.EndTime >= temp.EndTime) {
 			if temp.Holder == meeting.Holder {
 				return false, "You are busy at that time"
 			}
@@ -58,6 +73,8 @@ func CreateMeeting(meeting Meeting) (bool, string) {
 			}
 		}
 	}
+	allMeetings = append(allMeetings, meeting)
+	writeMeetingsIntoFile(allMeetings)
 	return true, ""
 }
 
@@ -84,14 +101,14 @@ func ModifyMeeting(title string, adds []string, removes []string) (bool, string)
 	for i, temp := range allMeetings {
 		if title == temp.Title {
 			if temp.Holder == currentUser {
-				meeting = &temp
 				meetingIndex = i
 			} else {
 				panic(fmt.Sprintf("You are not the holder of meeting %s", title))
 			}
 		}
 	}
-	if meeting.Holder != title {
+	meeting = &allMeetings[meetingIndex]
+	if meeting.Title != title {
 		panic(fmt.Sprintf("Meeting %s is not exit", title))
 	}
 
@@ -129,6 +146,7 @@ func ModifyMeeting(title string, adds []string, removes []string) (bool, string)
 	if len(meeting.Participator) == 0 {
 		allMeetings = append(allMeetings[:meetingIndex], allMeetings[meetingIndex+1:]...)
 	}
+	writeMeetingsIntoFile(allMeetings)
 	return true, ""
 }
 
@@ -141,7 +159,7 @@ func AddMemberToMeeting(meeting *Meeting, user string, meetings []Meeting) (bool
 	}
 	for _, temp := range meetings {
 		if user == temp.Holder || isParticipator(user, temp.Participator) && temp.Title != meeting.Title {
-			if (temp.StartTime < meeting.StartTime && temp.EndTime > meeting.StartTime) || (temp.EndTime > meeting.EndTime && temp.StartTime < meeting.EndTime) {
+			if (temp.StartTime <= meeting.StartTime && temp.EndTime > meeting.StartTime) || (temp.EndTime >= meeting.EndTime && temp.StartTime < meeting.EndTime) {
 				return false, user + " is busy at that time"
 			}
 		}
@@ -165,12 +183,12 @@ func QueryMeeting(startTime, endTime int64) []Meeting {
 	currentUser := readCurrentUserFromFile()
 	for _, meeting := range allMeetings {
 		if currentUser == meeting.Holder || isParticipator(currentUser, meeting.Participator) {
-			if (meeting.StartTime < startTime && meeting.EndTime >= startTime) || (meeting.StartTime <= endTime && meeting.EndTime > endTime) {
+			if (startTime <= meeting.StartTime && endTime >= meeting.StartTime) || (endTime >= meeting.EndTime && startTime <= meeting.EndTime) {
 				result = append(result, meeting)
 			}
 		}
 	}
-	return make([]Meeting, 0)
+	return result
 }
 
 func isParticipator(username string, participartors []string) bool {
@@ -213,7 +231,7 @@ func readMeetingsFromFile() []Meeting {
 	if err != nil {
 		panic(err)
 	}
-	err = json.Unmarshal(buffer, meetings)
+	err = json.Unmarshal(buffer, &meetings)
 	if err != nil {
 		panic(err)
 	}
@@ -225,7 +243,7 @@ func writeMeetingsIntoFile(meetings []Meeting) {
 	if err != nil {
 		panic(err)
 	}
-	file, err := os.Open(meetingFilePath)
+	file, err := os.OpenFile(meetingFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		panic(err)
 	}
@@ -234,5 +252,15 @@ func writeMeetingsIntoFile(meetings []Meeting) {
 	_, err = file.Write(data)
 	if err != nil {
 		panic(err)
+	}
+}
+
+func init() {
+	// check if meeting.json exist
+	if _, err := os.Stat(meetingFilePath); os.IsNotExist(err) {
+		_, err := os.Create(meetingFilePath)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

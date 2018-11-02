@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type User struct {
@@ -75,7 +76,7 @@ func readUsersFromFile() []User {
 		panic(err)
 	}
 	users := make([]User, 0)
-	err = json.Unmarshal(buffer, users)
+	err = json.Unmarshal(buffer, &users)
 	if err != nil {
 		panic(err)
 	}
@@ -87,7 +88,7 @@ func writeUsersIntoFile(users []User) {
 	if err != nil {
 		panic(err)
 	}
-	file, err := os.Open(userFilePath)
+	file, err := os.OpenFile(userFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		panic(err)
 	}
@@ -107,6 +108,7 @@ func readCurrentUserFromFile() (username string) {
 	defer file.Close()
 	file_reader := bufio.NewReader(file)
 	username, err = file_reader.ReadString('\n')
+	username = strings.Replace(username, "\n", "", -1)
 	if err != nil {
 		panic(err)
 	}
@@ -115,7 +117,7 @@ func readCurrentUserFromFile() (username string) {
 
 func writeCurrentUserToFile(username string) {
 	var str string
-	file, err := os.Open(currentUserFilePath)
+	file, err := os.OpenFile(currentUserFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		panic(err)
 	}
