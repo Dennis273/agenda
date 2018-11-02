@@ -1,8 +1,12 @@
 package entity
 
 import (
+	"bufio"
 	"encoding/json"
+	"fmt"
 	"os"
+	"strings"
+	"io"
 )
 
 type User struct {
@@ -34,27 +38,27 @@ func init() {
 
 // check username and write new user info into file
 func CreateUser(user User) (bool, string) {
-
+	return true, ""
 }
 
 // check password and write userinfo into currentUsr file
 func Login(username, password string) (bool, string) {
-
+	return true, ""
 }
 
 // clear userinfo in currentUsr file
 func Logout() (bool, string) {
-
+	return true, ""
 }
 
 // remove user info from file
 func DeleteUser() (bool, string) {
-
+	return true, ""
 }
 
 // query all userinfo from file
 func QueryUser() []User {
-
+	return make([]User, 0)
 }
 
 func readUsersFromFile() []User {
@@ -73,7 +77,7 @@ func readUsersFromFile() []User {
 		panic(err)
 	}
 	users := make([]User, 0)
-	err = json.Unmarshal(buffer, users)
+	err = json.Unmarshal(buffer, &users)
 	if err != nil {
 		panic(err)
 	}
@@ -85,13 +89,46 @@ func writeUsersIntoFile(users []User) {
 	if err != nil {
 		panic(err)
 	}
-	file, err := os.Open(userFilePath)
+	file, err := os.OpenFile(userFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
 
 	_, err = file.Write(data)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func readCurrentUserFromFile() (username string) {
+	file, err := os.Open(currentUserFilePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	file_reader := bufio.NewReader(file)
+	username, err = file_reader.ReadString('\n')
+	if err != nil {
+		if err == io.eof {
+			username = ""
+		}
+		panic(err)
+	} else {
+		username = strings.Replace(username, "\n", "", -1)
+	}
+	return username
+}
+
+func writeCurrentUserToFile(username string) {
+	var str string
+	file, err := os.OpenFile(currentUserFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	str = fmt.Sprintf("%s\n", username)
+	_, err = file.WriteString(str)
 	if err != nil {
 		panic(err)
 	}
