@@ -39,6 +39,7 @@ var modifyMemberCmd = &cobra.Command{
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Printf("ModifyMeeting failed: %s", r)
+				entity.Error(r)
 			} else {
 				fmt.Println("ModifyMeeting success")
 			}

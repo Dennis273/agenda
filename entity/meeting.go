@@ -20,6 +20,9 @@ func CreateMeeting(meeting Meeting) (bool, string) {
 	allMeetings := readMeetingsFromFile()
 	allUsers := readUsersFromFile()
 	currentUser := readCurrentUserFromFile()
+	if currentUser == "" {
+		return false, "You should login first"
+	}
 	meeting.Holder = currentUser
 	var tempMeeting = meeting
 	tempMeeting.Participator = make([]string, 0)
@@ -75,6 +78,7 @@ func CreateMeeting(meeting Meeting) (bool, string) {
 	}
 	allMeetings = append(allMeetings, meeting)
 	writeMeetingsIntoFile(allMeetings)
+	Info("Create meeting " + meeting.Title + " success")
 	return true, ""
 }
 
@@ -82,6 +86,10 @@ func ModifyMeeting(title string, adds []string, removes []string) (bool, string)
 	allMeetings := readMeetingsFromFile()
 	allUsers := readUsersFromFile()
 	usernames := make(map[string]string, len(allUsers))
+	currentUser := readCurrentUserFromFile()
+	if currentUser == "" {
+		panic("You should login first")
+	}
 	for _, temp := range allUsers {
 		usernames[temp.Username] = temp.Username
 	}
@@ -95,7 +103,6 @@ func ModifyMeeting(title string, adds []string, removes []string) (bool, string)
 			panic(fmt.Sprintf("User %s is not exit", temp))
 		}
 	}
-	currentUser := readCurrentUserFromFile()
 	var meeting *Meeting
 	var meetingIndex int
 	for i, temp := range allMeetings {
@@ -147,6 +154,7 @@ func ModifyMeeting(title string, adds []string, removes []string) (bool, string)
 		allMeetings = append(allMeetings[:meetingIndex], allMeetings[meetingIndex+1:]...)
 	}
 	writeMeetingsIntoFile(allMeetings)
+	Info("ModifyMeeting " + title + " success")
 	return true, ""
 }
 
@@ -179,8 +187,11 @@ func RemoveMemberFromMeeting(meeting *Meeting, user string, meetings []Meeting) 
 
 func QueryMeeting(startTime, endTime int64) []Meeting {
 	var result []Meeting
-	allMeetings := readMeetingsFromFile()
 	currentUser := readCurrentUserFromFile()
+	if currentUser == "" {
+		panic("You should login first")
+	}
+	allMeetings := readMeetingsFromFile()
 	for _, meeting := range allMeetings {
 		if currentUser == meeting.Holder || isParticipator(currentUser, meeting.Participator) {
 			if (startTime <= meeting.StartTime && endTime >= meeting.StartTime) || (endTime >= meeting.EndTime && startTime <= meeting.EndTime) {
@@ -188,6 +199,7 @@ func QueryMeeting(startTime, endTime int64) []Meeting {
 			}
 		}
 	}
+	Info("Query meetings success")
 	return result
 }
 

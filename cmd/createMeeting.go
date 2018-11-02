@@ -46,9 +46,12 @@ var createMeetingCmd = &cobra.Command{
 			fmt.Printf("%d:%s \n", num, name)
 		}
 
+		entity.Info("Create Meeting Called")
+
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Create meeting failed:", r)
+				entity.Error(r)
 			} else {
 				fmt.Println("Create meeting success")
 			}

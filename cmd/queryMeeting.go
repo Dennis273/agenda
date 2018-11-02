@@ -40,6 +40,7 @@ var queryMeetingCmd = &cobra.Command{
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("Query meeting failed:", r)
+				entity.Error(r)
 			} else {
 				fmt.Println("Query meeting success")
 			}
