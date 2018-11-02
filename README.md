@@ -24,6 +24,7 @@ Agenda is an CLI-based meeting-managing application which supports multiple user
 
 #### createMeeting
 
+```bash
 Usage:
   Agenda createMeeting [flags]
 
@@ -33,6 +34,7 @@ Flags:
   -p, --participators stringArray   the participators of the meeting
   -s, --startTime string            the time when the meeting begin(yyyy-MM-dd-hh-mm)
   -t, --title string                meeting title
+```
 
 ##### 创建一个会议(需要先登陆)
 
@@ -94,6 +96,7 @@ Create meeting failed: user2 is busy at that time
 
 #### modifyMember
 
+```bash
 Usage:
   Agenda modifyMember [flags]
 
@@ -102,6 +105,7 @@ Flags:
   -d, --delete stringArray   delete member(s) from the meeting
   -h, --help                 help for modifyMember
   -t, --title string         meeting title
+```
 
 ##### 向已存在的添加成员或移出成员
 
@@ -185,6 +189,7 @@ ModifyMeeting failed: user3 is busy at that time
 
 #### queryMeeting
 
+```bash
 Usage:
   Agenda queryMeeting [flags]
 
@@ -192,6 +197,7 @@ Flags:
   -e, --endTime string     the end time(yyyy-MM-dd-hh-mm)
   -h, --help               help for queryMeeting
   -s, --startTime string   the start time(yyyy-MM-dd-hh-mm)
+```
 
 ##### 时间区间中开始时间需要小于等于结束时间
 
