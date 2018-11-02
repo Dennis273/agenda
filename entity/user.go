@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"io"
 )
 
 type User struct {
@@ -108,9 +109,13 @@ func readCurrentUserFromFile() (username string) {
 	defer file.Close()
 	file_reader := bufio.NewReader(file)
 	username, err = file_reader.ReadString('\n')
-	username = strings.Replace(username, "\n", "", -1)
 	if err != nil {
+		if err == io.eof {
+			username = ""
+		}
 		panic(err)
+	} else {
+		username = strings.Replace(username, "\n", "", -1)
 	}
 	return username
 }
