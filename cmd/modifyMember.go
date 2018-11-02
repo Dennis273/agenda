@@ -51,6 +51,8 @@ var modifyMemberCmd = &cobra.Command{
 		for num, name := range modifyMemberArgs.delMember {
 			fmt.Printf("%d:%s ", num, name)
 		}
+		fmt.Print("\n")
+		entity.Info("Modify Member called")
 		entity.ModifyMeeting(modifyMemberArgs.title, modifyMemberArgs.addMember, modifyMemberArgs.delMember)
 	},
 }

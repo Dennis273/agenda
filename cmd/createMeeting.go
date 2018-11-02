@@ -94,7 +94,7 @@ func checkTimeFormat(time string) bool {
 	if matched, _ := regexp.MatchString("[\\d]{4}-[\\d]{2}-[\\d]{2}-[\\d]{2}-[\\d]{2}", time); !matched {
 		panic("date formate error")
 	}
-	fmt.Sscanf(createMeetingArgs.startTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
+	fmt.Sscanf(time, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
 	if min < 0 || min >= 60 || hour < 0 || hour >= 24 || day >= 32 || day <= 0 || month <= 0 || month > 12 || year < 0 {
 		return false
 	}

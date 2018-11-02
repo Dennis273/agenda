@@ -50,18 +50,19 @@ var queryMeetingCmd = &cobra.Command{
 		}
 		var year, month, day, hour, min int
 		var stime, etime int64
-		fmt.Sscanf(createMeetingArgs.startTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
+		fmt.Sscanf(queryMeetingArgs.startTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
 		stime = int64(year*int(math.Pow10(8)) + month*int(math.Pow10(6)) + day*int(math.Pow10(4)) + hour*int(math.Pow10(2)) + min)
-		fmt.Sscanf(createMeetingArgs.endTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
+		fmt.Sscanf(queryMeetingArgs.endTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
 		etime = int64(year*int(math.Pow10(8)) + month*int(math.Pow10(6)) + day*int(math.Pow10(4)) + hour*int(math.Pow10(2)) + min)
 		if stime > etime {
 			panic("time interval error")
 		}
+		entity.Info("Query Meeting called")
 		meetings := entity.QueryMeeting(stime, etime)
 		var output strings.Builder
-		output.WriteString("StartTime\tEndTime\tTitle\tHolder\tParticipators\n")
+		output.WriteString("\nStartTime\tEndTime\t\tTitle\t\tHolder\tParticipators\n")
 		for _, meeting := range meetings {
-			str := fmt.Sprintf("%s\t%s\t%s\t%s", dateInt64ToString(meeting.StartTime), dateInt64ToString(meeting.EndTime), meeting.Title, meeting.Holder)
+			str := fmt.Sprintf("%s\t%s\t%s\t%s\t", dateInt64ToString(meeting.StartTime), dateInt64ToString(meeting.EndTime), meeting.Title, meeting.Holder)
 			output.WriteString(str)
 			for _, p := range meeting.Participator {
 				output.WriteString(p)
@@ -69,7 +70,7 @@ var queryMeetingCmd = &cobra.Command{
 			}
 			output.WriteString("\n")
 		}
-		fmt.Print(output)
+		fmt.Print(output.String())
 	},
 }
 

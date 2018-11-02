@@ -23,6 +23,10 @@ func CreateMeeting(meeting Meeting) (bool, string) {
 	if currentUser == "" {
 		return false, "You should login first"
 	}
+
+	if len(meeting.Participator) == 0 {
+		return false, "A meeting should at least has a participator"
+	}
 	meeting.Holder = currentUser
 	var tempMeeting = meeting
 	tempMeeting.Participator = make([]string, 0)
@@ -109,13 +113,13 @@ func ModifyMeeting(title string, adds []string, removes []string) (bool, string)
 		if title == temp.Title {
 			if temp.Holder == currentUser {
 				meetingIndex = i
+				meeting = &allMeetings[meetingIndex]
 			} else {
 				panic(fmt.Sprintf("You are not the holder of meeting %s", title))
 			}
 		}
 	}
-	meeting = &allMeetings[meetingIndex]
-	if meeting.Title != title {
+	if meeting == nil {
 		panic(fmt.Sprintf("Meeting %s is not exit", title))
 	}
 
@@ -194,7 +198,7 @@ func QueryMeeting(startTime, endTime int64) []Meeting {
 	allMeetings := readMeetingsFromFile()
 	for _, meeting := range allMeetings {
 		if currentUser == meeting.Holder || isParticipator(currentUser, meeting.Participator) {
-			if (startTime <= meeting.StartTime && endTime >= meeting.StartTime) || (endTime >= meeting.EndTime && startTime <= meeting.EndTime) {
+			if (meeting.StartTime <= startTime && meeting.EndTime >= startTime) || (meeting.EndTime >= endTime && meeting.EndTime <= endTime) {
 				result = append(result, meeting)
 			}
 		}
