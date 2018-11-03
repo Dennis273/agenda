@@ -26,6 +26,7 @@ func init() {
 		if err != nil {
 			panic(err)
 		}
+
 	}
 	//check if currentUser.txt exist
 	if _, err := os.Stat(currentUserFilePath); os.IsNotExist(err) {
@@ -37,7 +38,23 @@ func init() {
 }
 
 // check username and write new user info into file
-func CreateUser(user User) (bool, string) {
+func CreateUser(username, password, email, phone string) (bool, string) {
+	users := readUsersFromFile()
+	for _, value := range users {
+		if value.Username == username {
+			return false, "Username is owned."
+		}
+		if value.Email == email {
+			return false, "Email is owned."
+		}
+	}
+	user := User{
+		username,
+		password,
+		email,
+		phone,
+	}
+	writeUsersIntoFile(append(users, user))
 	return true, ""
 }
 

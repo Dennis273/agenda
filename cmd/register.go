@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"fmt"
+
+	"github.com/Dennis273/agenda/entity"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +42,12 @@ var registerCmd = &cobra.Command{
 			fmt.Println("Invalid arguments => aborted.")
 			return
 		}
-		fmt.Printf("%s %s %s %s\n", registerArgs.username, registerArgs.password,registerArgs.email, registerArgs.phone)
+		suc, err := entity.CreateUser(registerArgs.username, registerArgs.password, registerArgs.email, registerArgs.phone)
+		if (suc) {
+			fmt.Println("Register success")
+		} else {
+			fmt.Println(err)
+		}
 	},
 }
 
