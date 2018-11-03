@@ -26,7 +26,15 @@ func init() {
 		if err != nil {
 			panic(err)
 		}
-
+		file, err := os.OpenFile(userFilePath, os.O_WRONLY|os.O_TRUNC, 0777)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+		_, err = file.Write([]byte("[]"))
+		if err != nil {
+			panic(err)
+		}
 	}
 	//check if currentUser.txt exist
 	if _, err := os.Stat(currentUserFilePath); os.IsNotExist(err) {
