@@ -113,8 +113,18 @@ func DeleteUser() (bool, string) {
 }
 
 // query all userinfo from file
-func QueryUser() []User {
-	return make([]User, 0)
+func QueryUser() (bool, string) {
+	cur := readCurrentUserFromFile()
+	if cur == "" {
+		return false, "Permission denied"
+	} else {
+		users := readUsersFromFile()
+		fmt.Println("Users:")
+		for _, value := range users {
+			fmt.Printf("%s\t%s\t%s\n", value.Username, value.Email, value.Phone)
+		}
+		return true, ""
+	}
 }
 
 func readUsersFromFile() []User {
