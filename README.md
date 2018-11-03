@@ -4,25 +4,105 @@
 
 Agenda is an CLI-based meeting-managing application which supports multiple users.
 
-## Installing
-
 ## Getting Started
 
 ### Users
 
-#### register
+#### ` register`
 
-#### login
+##### Basic Usage
 
-#### logout
+```bash
+Usage:
+  Agenda register [flags]
 
-#### deleteUser
+Flags:
+  -e, --email string         Email
+  -h, --help                 help for register
+  -p, --password string      Password
+  -n, --phoneNumber string   Phone number
+  -u, --username string      Username to login
+```
 
-#### queryUser
+#### `login`
+
+```bash
+Usage:
+  Agenda login [flags]
+
+Flags:
+  -h, --help              help for login
+  -p, --password string   Password
+  -u, --username string   Username
+```
+
+* User cannot login another user while logged in
+
+    ```bash
+    $ agenda login -uUser -pPass
+    Logout success
+    $ agenda login -uUser -pPass
+    Already logged in as User
+    ```
+
+#### `logout`
+
+```bash
+Usage:
+  Agenda logout [flags]
+
+Flags:
+  -h, --help   help for logout
+```
+
+* User cannot login another user while not logged in
+
+  ```bash
+  // not logged in
+  $ agenda logout
+  User not logged in.
+  ```
+
+
+#### `deleteUser`
+
+```bash
+Usage:
+  Agenda deleteUser [flags]
+
+Flags:
+  -h, --help   help for deleteUser
+```
+
+* Only logged user can delete its account
+
+  ```bash
+  // not logged in
+  $ agenda deleteUser
+  User not logged in
+  ```
+
+#### `queryUser`
+
+```bash
+Usage:
+  Agenda queryUser [flags]
+
+Flags:
+  -h, --help   help for queryUser
+```
+
+* Only logged user can query all users
+
+  ```bash
+  // not logged in
+  $ agenda queryUser
+  Permission denied
+  ```
 
 ### Meetings
 
-#### createMeeting
+#### `createMeeting`
 
 ```bash
 Usage:
@@ -36,70 +116,67 @@ Flags:
   -t, --title string                meeting title
 ```
 
-##### 创建一个会议(需要先登陆)
+* Creating a Meeting (Login required)
 
-```bash
-$ agenda createMeeting -t meeting1 -s 2018-11-02-20-00 -e 2018-11-02-20-10 -p user2 -p user3
-createMeeting called
-meeting title:  meeting1
-start time:  2018-11-02-20-00
-end time:  2018-11-02-20-10
-participators:
-0:user2
-1:user3
-Create meeting success
-```
+    ```bash
+    $ agenda createMeeting -t meeting1 -s 2018-11-02-20-00 -e 2018-11-02-20-10 -p user2 -p user3
+    createMeeting called
+    meeting title:  meeting1
+    start time:  2018-11-02-20-00
+    end time:  2018-11-02-20-10
+    participators:
+    0:user2
+    1:user3
+    Create meeting success
+    ```
 
-##### 不能创建同名会议
+* You cannot create a meeting with existing name
 
-```bash
-$ agenda createMeeting -t meeting1 -s 2018-11-02-20-00 -e
-...
-Create meeting failed: meeting exit
-```
+    ```bash
+    $ agenda createMeeting -t meeting1 -s 2018-11-02-20-00 -e
+    ...
+    Create meeting failed: meeting exit
+    ```
 
-##### 参与者不能有相同的用户, 发起者不能作为参与者
+* The sponsor cannot be a participator
 
-```bash
-$ agenda createMeeting -t meeting2  -s 2018-11-02-20-10 -e 2018-11-02-20-20 -p user2 -p user2
-...
-Create meeting failed: You could not repeatly attend a user to a same meeting
+    ```bash
+    $ agenda createMeeting -t meeting2  -s 2018-11-02-20-10 -e 2018-11-02-20-20 -p user2 -p user2
+    ...
+    Create meeting failed: You could not repeatly attend a user to a same meeting
 
-$ agenda createMeeting -t meeting2  -s 2018-11-02-20-10 -e 2018-11-02-20-20 -p user1
-...
-Create meeting failed: You could not attend this meeting as participator
-```
+    $ agenda createMeeting -t meeting2  -s 2018-11-02-20-10 -e 2018-11-02-20-20 -p user1
+    ...
+    Create meeting failed: You could not attend this meeting as participator
+    ```
 
-##### 参与者必须为已注册用户
+* Participator should be an registered user
 
-```bash
-$ agenda createMeeting -t meeting2  -s 2018-11-02-20-10 -e 2018-11-02-20-20 -p errorUser
-...
-Create meeting failed: errorUser is not exit
-```
+    ```bash
+    $ agenda createMeeting -t meeting2  -s 2018-11-02-20-10 -e 2018-11-02-20-20 -p errorUser
+    ...
+    Create meeting failed: errorUser is not exit
+    ```
 
-##### 用户发起者或者参与者不能分身参与会议(允许时间端点重叠)
+* Users are not allowed to participate in meetings at the same time
 
-```bash
-$ agenda createMeeting -t meeting2  -s 2018-11-02-20-09 -e 2018-11-02-20-20 -p user2
-...
-Create meeting failed: You are busy at that time
-```
+    ```bash
+    $ agenda createMeeting -t meeting2  -s 2018-11-02-20-09 -e 2018-11-02-20-20 -p user2
+    ...
+    Create meeting failed: You are busy at that time
 
-登陆user4
+    // login with User4
+    $ agenda createMeeting -t meeting2  -s 2018-11-02-20-09 -e 2018-11-	  02-20-20 -p user2
+    ...
+    reate meeting failed: user2 is busy at that time
+    ```
 
-```bash
-$ agenda createMeeting -t meeting2  -s 2018-11-02-20-09 -e 2018-11-02-20-20 -p user2
-...
-Create meeting failed: user2 is busy at that time
-```
 
-#### modifyMember
+#### `modifyMember`
 
-```bash
+```bash 
 Usage:
   Agenda modifyMember [flags]
-
 Flags:
   -a, --add stringArray      add member(s) to the meeting
   -d, --delete stringArray   delete member(s) from the meeting
@@ -107,112 +184,79 @@ Flags:
   -t, --title string         meeting title
 ```
 
-##### 向已存在的添加成员或移出成员
 
-```bash
-$ agenda modifyMember -t meeting1 -a user4
-...
-old participators:ModifyMeeting success
-```
+* Update meeting participator
 
-##### 操作的会议须已创建
+    ```bash
+    $ agenda modifyMember -t meeting1 -a user4
+    ...
+    old participators:ModifyMeeting success
+    ```
 
-```bash
-$ agenda modifyMember -t errorMeeting -a user4
-...
-ModifyMeeting failed: Meeting errorMeeting is not exit
-```
+* Member should be existing user
 
-##### 添加或移除的成员需要是已注册用户
+    ```bash
+    $ agenda modifyMember -t meeting1 -a erroruser
+    ...
+    ModifyMeeting failed: User erroruser is not exit
+    ```
 
-```bash
-$ agenda modifyMember -t meeting1 -a erroruser
-...
-ModifyMeeting failed: User erroruser is not exit
-```
 
-##### 你不能将自己添加到会议中或从会议中移除, 不能一次重复添加或移除成员
+* Only sponsor can update a meeting
 
-```bash
-$ agenda modifyMember -t meeting1 -a user1
-modifyMember called
-meeting title:  meeting1
-new participators: 0:user1
-old participators:ModifyMeeting failed: You are the holder of this meeting
+    ```bash
+    // logi as user2
+    $ agenda modifyMember -t meeting1 -a user4
+    ...
+    ModifyMeeting failed: You are not the holder of meeting meeting1
+    ```
 
-$ agenda modifyMember -t meeting1 -a user4 -a user4
-...
-ModifyMeeting failed: user4 was a participator of this meeting
-```
+* A meeting will be canceled if it has no paritcipator
 
-##### 添加的成员之前不在在会议中, 移除的成员之前要在会议中
+    ```bash
+    $ agenda modifyMember -t meeting1 -d user2 -d user3 -d user4
+    ...
+    ModifyMeeting success
 
-```bash
-$ agenda modifyMember -t meeting1 -a user2
-...
-ModifyMeeting failed: user2 was a participator of this meeting
+    $ agenda modifyMember -t meeting1 -a user2
+    ...
+    ModifyMeeting failed: Meeting meeting1 is not exit
+    ```
 
-$ agenda modifyMember -t meeting1 -d user5
-...
-ModifyMeeting failed: user5 was not a participator of this meeting
-```
+* Cannot add members who are buzy into a meeting
 
-##### 你必须为创建者
+    ```bash
+    $ agenda modifyMember -t meeting1 -a user3
+    ...
+    ModifyMeeting failed: user3 is busy at that time
+    ```
 
-登陆user2
+#### `queryMeeting`
 
-```bash
-$ agenda modifyMember -t meeting1 -a user4
-...
-ModifyMeeting failed: You are not the holder of meeting meeting1
-```
+    ```bash
+    Usage:
+      Agenda queryMeeting [flags]
+    
+    Flags:
+      -e, --endTime string     the end time(yyyy-MM-dd-hh-mm)
+      -h, --help               help for queryMeeting
+      -s, --startTime string   the start time(yyyy-MM-dd-hh-mm)
+    ```
 
-##### 如果会议中没有参与者, 则会议会被取消
+* Time check
 
-```bash
-$ agenda modifyMember -t meeting1 -d user2 -d user3 -d user4
-...
-ModifyMeeting success
+    ```bash
+    $ agenda queryMeeting -s 2018-11-02-20-00 -e 2018-11-02-20-01
+    queryMeeting called
+    the start time: 2018-11-02-20-00
+    the end time: 2018-11-02-20-01
+    StartTime       EndTime         Title           Holder  Participators
+    2018-11-2-20-0  2018-11-2-20-10 meeting1        user1   user2
+    Query meeting success
+    ```
 
-$ agenda modifyMember -t meeting1 -a user2
-...
-ModifyMeeting failed: Meeting meeting1 is not exit
-```
+#### `cancelMeeting`
 
-##### 向会议添加的成员需要有时间参与会议
+#### `quitMeeting`
 
-```bash
-$ agenda modifyMember -t meeting1 -a user3
-...
-ModifyMeeting failed: user3 is busy at that time
-```
-
-#### queryMeeting
-
-```bash
-Usage:
-  Agenda queryMeeting [flags]
-
-Flags:
-  -e, --endTime string     the end time(yyyy-MM-dd-hh-mm)
-  -h, --help               help for queryMeeting
-  -s, --startTime string   the start time(yyyy-MM-dd-hh-mm)
-```
-
-##### 时间区间中开始时间需要小于等于结束时间
-
-```bash
-$ agenda queryMeeting -s 2018-11-02-20-00 -e 2018-11-02-20-01
-queryMeeting called
-the start time: 2018-11-02-20-00
-the end time: 2018-11-02-20-01
-StartTime       EndTime         Title           Holder  Participators
-2018-11-2-20-0  2018-11-2-20-10 meeting1        user1   user2
-Query meeting success
-```
-
-#### cancelMeeting
-
-#### quitMeeting
-
-#### clearMeeting
+#### `clearMeeting`
