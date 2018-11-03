@@ -53,7 +53,23 @@ func Logout() (bool, string) {
 
 // remove user info from file
 func DeleteUser() (bool, string) {
-	return true, ""
+	username := readCurrentUserFromFile()
+	var i int
+	if username == "" {
+		fmt.Println("User not logged in")
+		return false, "User not logged in"
+	} else {
+		users := readUsersFromFile()
+		for index, value := range users {
+			if value.Username == username {
+				i = index
+				break
+			}
+		}
+		writeUsersIntoFile(append(users[:i], users[i + 1:]...))
+		fmt.Println("Delete User success")
+		return true, ""
+	}
 }
 
 // query all userinfo from file
@@ -110,10 +126,11 @@ func readCurrentUserFromFile() (username string) {
 	file_reader := bufio.NewReader(file)
 	username, err = file_reader.ReadString('\n')
 	if err != nil {
-		if err == io.eof {
+		if err ==  io.EOF {
 			username = ""
+		} else {
+			panic(err)
 		}
-		panic(err)
 	} else {
 		username = strings.Replace(username, "\n", "", -1)
 	}

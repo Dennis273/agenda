@@ -15,8 +15,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/Dennis273/agenda/entity"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +26,7 @@ var deleteUserCmd = &cobra.Command{
 	Long: `Delete the user that is currently logged in.
 	This operation would automatically remove you from every meetings that you participated in, and cancel meetings you holded.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("deleteUser called")
+		entity.DeleteUser();
 	},
 }
 
