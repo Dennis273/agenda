@@ -88,7 +88,12 @@ func Login(username, password string) (bool, string) {
 
 // clear userinfo in currentUsr file
 func Logout() (bool, string) {
-	return true, ""
+	if cur := readCurrentUserFromFile(); cur == "" {
+		return false, "User not logged in."
+	} else {
+		writeCurrentUserToFile("")
+		return true, ""
+	}
 }
 
 // remove user info from file
