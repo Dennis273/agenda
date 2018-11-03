@@ -68,7 +68,22 @@ func CreateUser(username, password, email, phone string) (bool, string) {
 
 // check password and write userinfo into currentUsr file
 func Login(username, password string) (bool, string) {
-	return true, ""
+	cur := readCurrentUserFromFile()
+	if cur != "" {
+		return false, "Already logged in as " + cur
+	}
+	users := readUsersFromFile()
+	for _, value := range users {
+		if value.Username == username {
+			if  value.Password == password {
+				writeCurrentUserToFile(username)
+				return true, ""
+			} else {
+				return false, "Password in correct."
+			}
+		}
+	}
+	return false, "User not found."
 }
 
 // clear userinfo in currentUsr file

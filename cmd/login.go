@@ -16,6 +16,7 @@ package cmd
 
 import (
   "fmt"
+  "github.com/Dennis273/agenda/entity"
   "github.com/spf13/cobra"
 )
 
@@ -34,7 +35,12 @@ var loginCmd = &cobra.Command{
       fmt.Println("Invalid arguments")
       return
     }
-    fmt.Printf("%s %s\n", loginArgs.username, loginArgs.password)
+    suc, err := entity.Login(loginArgs.username, loginArgs.password)
+    if (suc) {
+      fmt.Println("Login success")
+    } else {
+      fmt.Println(err)
+    }
   },
 }
 
