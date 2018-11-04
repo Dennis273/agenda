@@ -16,7 +16,11 @@ package cmd
 
 import (
 	"fmt"
+	"regexp"
 
+	"math"
+
+	"github.com/Dennis273/agenda/entity"
 	"github.com/spf13/cobra"
 )
 
@@ -41,6 +45,39 @@ var createMeetingCmd = &cobra.Command{
 		for num, name := range createMeetingArgs.participators {
 			fmt.Printf("%d:%s \n", num, name)
 		}
+
+		entity.Info("Create Meeting Called")
+
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Create meeting failed:", r)
+				entity.Error(r)
+			} else {
+				fmt.Println("Create meeting success")
+			}
+		}()
+
+		if !checkTimeFormat(createMeetingArgs.startTime) || !checkTimeFormat(createMeetingArgs.endTime) {
+			panic(fmt.Sprint("Invalid date"))
+		}
+		var year, month, day, hour, min int
+		var stime, etime int64
+		fmt.Sscanf(createMeetingArgs.startTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
+		stime = int64(year*int(math.Pow10(8)) + month*int(math.Pow10(6)) + day*int(math.Pow10(4)) + hour*int(math.Pow10(2)) + min)
+		fmt.Sscanf(createMeetingArgs.endTime, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
+		etime = int64(year*int(math.Pow10(8)) + month*int(math.Pow10(6)) + day*int(math.Pow10(4)) + hour*int(math.Pow10(2)) + min)
+		if stime >= etime {
+			panic("time interval error")
+		}
+		new_meeting := entity.Meeting{createMeetingArgs.meetingTitle,
+			"",
+			createMeetingArgs.participators,
+			stime,
+			etime}
+		success, err := entity.CreateMeeting(new_meeting)
+		if !success {
+			panic(err)
+		}
 	},
 }
 
@@ -50,4 +87,30 @@ func init() {
 	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.startTime), "startTime", "s", "", "the time when the meeting begin(yyyy-MM-dd-hh-mm)")
 	createMeetingCmd.Flags().StringVarP(&(createMeetingArgs.endTime), "endTime", "e", "", "the end time of the meeting(yyyy-MM-dd-hh-mm)")
 	createMeetingCmd.Flags().StringArrayVarP(&(createMeetingArgs.participators), "participators", "p", nil, "the participators of the meeting")
+}
+
+func checkTimeFormat(time string) bool {
+	var year, month, day, hour, min int
+	if matched, _ := regexp.MatchString("[\\d]{4}-[\\d]{2}-[\\d]{2}-[\\d]{2}-[\\d]{2}", time); !matched {
+		panic("date formate error")
+	}
+	fmt.Sscanf(time, "%d-%d-%d-%d-%d", &year, &month, &day, &hour, &min)
+	if min < 0 || min >= 60 || hour < 0 || hour >= 24 || day >= 32 || day <= 0 || month <= 0 || month > 12 || year < 0 {
+		return false
+	}
+	switch month {
+	case 1, 3, 5, 7, 8, 10, 12:
+		return true
+	case 4, 6, 9, 11:
+		if day == 31 {
+			return true
+		}
+	default:
+		if day <= 28 {
+			return true
+		} else {
+			return year%400 == 0 || (year%4 == 0 && year%100 != 0)
+		}
+	}
+	return true
 }

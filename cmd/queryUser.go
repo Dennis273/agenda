@@ -1,4 +1,4 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2018 Dennis273 <dennisc69%@gmail.com>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"fmt"
-
+	"github.com/Dennis273/agenda/entity"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +26,10 @@ var queryUserCmd = &cobra.Command{
 	Short: "Query all user",
 	Long: `Query all user`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("queryUser called")
+		suc, err := entity.QueryUser()
+		if (!suc) {
+			fmt.Println(err)
+		}
 	},
 }
 
